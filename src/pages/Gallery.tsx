@@ -29,12 +29,26 @@ export const Gallery: React.FC = () => {
     { src: '/photos/class time.jpg', title: 'Classroom Session', desc: 'Active learning and engagement.', category: 'academics' },
     { src: '/photos/graduants-celebration.jpg', title: 'Graduation Day', desc: 'Celebrating our successful candidates.', category: 'academics' },
 
-    // Sports (Existing and Pre-configured ones)
+    // Sports (Original and 18 new photos)
     { src: '/photos/sports-ground.jpg', title: 'Sports Grounds', desc: 'Fields for extracurricular sports activities.', category: 'sports' },
-    { src: '/photos/sports1.jpg', title: 'Football Match', desc: 'Greenfield S.S team competing in the local school championships.', category: 'sports' },
-    { src: '/photos/sports2.jpg', title: 'Athletics & Track', desc: 'Students demonstrating speed and agility in inter-house races.', category: 'sports' },
-    { src: '/photos/sports3.jpg', title: 'Basketball Court', desc: 'Vibrant action on our on-campus court.', category: 'sports' },
-    { src: '/photos/sports4.jpg', title: 'Volleyball Championship', desc: 'Cohesive teamwork and high-energy volleyball matches.', category: 'sports' }
+    { src: '/photos/sports (1).jpg', title: 'Football Kick-off', desc: 'The school team starts the match with intense energy.', category: 'sports' },
+    { src: '/photos/sports (2).jpg', title: 'Athletics Sprint', desc: 'Runners blasting off from the starting blocks during the championship.', category: 'sports' },
+    { src: '/photos/sports (3).jpg', title: 'Basketball Warmups', desc: 'Students practicing layups and shooting drills on our courts.', category: 'sports' },
+    { src: '/photos/sports (4).jpg', title: 'Volleyball Serve', desc: 'A powerful serve during the inter-house volleyball tournament.', category: 'sports' },
+    { src: '/photos/sports (5).jpg', title: 'Goalkeeper Save', desc: 'Spectacular diving save by the school team goalkeeper.', category: 'sports' },
+    { src: '/photos/sports (6).jpg', title: 'Relay Exchange', desc: 'Flawless baton pass during the 4x100m relay racing finals.', category: 'sports' },
+    { src: '/photos/sports (7).jpg', title: 'Netball Inter-House', desc: 'Vibrant defense and shooting action in an intense netball clash.', category: 'sports' },
+    { src: '/photos/sports (8).jpg', title: 'School Athletics Team', desc: 'Group photo of Greenfield\'s championship track and field team.', category: 'sports' },
+    { src: '/photos/sports (9).jpg', title: 'High Jump Attempt', desc: 'An athlete clearing the bar with standard Fosbury Flop technique.', category: 'sports' },
+    { src: '/photos/sports (10).jpg', title: 'Football Team Group', desc: 'Greenfield Secondary School\'s senior boys football team.', category: 'sports' },
+    { src: '/photos/sports (11).jpg', title: 'Tug of War', desc: 'Tense and fun teamwork during the annual sports day festival.', category: 'sports' },
+    { src: '/photos/sports (12).jpg', title: 'Volleyball Spiker', desc: 'An intense jump spike over the net during the volleyball finals.', category: 'sports' },
+    { src: '/photos/sports (13).jpg', title: 'Midfield Battle', desc: 'Football players competing for possession in the midfield.', category: 'sports' },
+    { src: '/photos/sports (14).jpg', title: 'Track Runners', desc: 'Final stretch of the 800m middle-distance running event.', category: 'sports' },
+    { src: '/photos/sports (15).jpg', title: 'Trophy Presentation', desc: 'Celebrating victory and lifting the championship cup.', category: 'sports' },
+    { src: '/photos/sports (16).jpg', title: 'Girls Football Match', desc: 'Competitive match showing girls sports empowerment.', category: 'sports' },
+    { src: '/photos/sports (17).jpg', title: 'Long Jump Fly', desc: 'An athlete soaring through the air towards the sandpit.', category: 'sports' },
+    { src: '/photos/sports (18).jpg', title: 'Supporters and Cheers', desc: 'Vibrant cheer section supporting their favorite sports house.', category: 'sports' }
   ];
 
   const filteredItems = activeFilter === 'all'
