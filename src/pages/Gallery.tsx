@@ -1,7 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { updateSEO } from '../utils/seo';
 
+type CategoryType = 'all' | 'campus' | 'academics' | 'sports';
+
 export const Gallery: React.FC = () => {
+  const [activeFilter, setActiveFilter] = useState<CategoryType>('all');
+
   useEffect(() => {
     updateSEO(
       'Gallery | GREENFIELD SECONDARY SCHOOL Masindi',
@@ -10,19 +14,32 @@ export const Gallery: React.FC = () => {
   }, []);
 
   const galleryItems = [
-    { src: '/photos/o_level_prefects.jpg', title: 'O-Level Prefects', desc: 'Leadership in the making.' },
-    { src: '/photos/a_level_prefects.jpg', title: 'A-Level Prefects', desc: 'Guidance and responsibility.' },
-    { src: '/photos/science lab.jpg', title: 'Science Lab', desc: 'Innovation and exploration.' },
-    { src: '/photos/computer lab.jpg', title: 'ICT Center', desc: 'Empowering digital literacy.' },
-    { src: '/photos/library.jpg', title: 'Main Library', desc: 'A hub for knowledge and research.' },
-    { src: '/photos/class time.jpg', title: 'Classroom Session', desc: 'Active learning and engagement.' },
-    { src: '/photos/school-campus-hero.jpg', title: 'School Campus', desc: 'Beautiful landscape view.' },
-    { src: '/photos/school-entrance.jpg', title: 'Main Gate', desc: 'Front entrance of the school.' },
-    { src: '/photos/sports-ground.jpg', title: 'Sports Grounds', desc: 'Fields for extracurricular sports activities.' },
-    { src: '/photos/school-hall.jpg', title: 'School Hall', desc: 'Venue for assemblies and main events.' },
-    { src: '/photos/graduants-celebration.jpg', title: 'Graduation Day', desc: 'Celebrating our successful candidates.' },
-    { src: '/photos/dormitory-view.jpg', title: 'Student Dormitories', desc: 'Day and boarding living facilities.' }
+    // Campus & Leadership
+    { src: '/photos/o_level_prefects.jpg', title: 'O-Level Prefects', desc: 'Leadership in the making.', category: 'campus' },
+    { src: '/photos/a_level_prefects.jpg', title: 'A-Level Prefects', desc: 'Guidance and responsibility.', category: 'campus' },
+    { src: '/photos/school-campus-hero.jpg', title: 'School Campus', desc: 'Beautiful landscape view.', category: 'campus' },
+    { src: '/photos/school-entrance.jpg', title: 'Main Gate', desc: 'Front entrance of the school.', category: 'campus' },
+    { src: '/photos/school-hall.jpg', title: 'School Hall', desc: 'Venue for assemblies and main events.', category: 'campus' },
+    { src: '/photos/dormitory-view.jpg', title: 'Student Dormitories', desc: 'Day and boarding living facilities.', category: 'campus' },
+
+    // Academics
+    { src: '/photos/science lab.jpg', title: 'Science Lab', desc: 'Innovation and exploration.', category: 'academics' },
+    { src: '/photos/computer lab.jpg', title: 'ICT Center', desc: 'Empowering digital literacy.', category: 'academics' },
+    { src: '/photos/library.jpg', title: 'Main Library', desc: 'A hub for knowledge and research.', category: 'academics' },
+    { src: '/photos/class time.jpg', title: 'Classroom Session', desc: 'Active learning and engagement.', category: 'academics' },
+    { src: '/photos/graduants-celebration.jpg', title: 'Graduation Day', desc: 'Celebrating our successful candidates.', category: 'academics' },
+
+    // Sports (Existing and Pre-configured ones)
+    { src: '/photos/sports-ground.jpg', title: 'Sports Grounds', desc: 'Fields for extracurricular sports activities.', category: 'sports' },
+    { src: '/photos/sports1.jpg', title: 'Football Match', desc: 'Greenfield S.S team competing in the local school championships.', category: 'sports' },
+    { src: '/photos/sports2.jpg', title: 'Athletics & Track', desc: 'Students demonstrating speed and agility in inter-house races.', category: 'sports' },
+    { src: '/photos/sports3.jpg', title: 'Basketball Court', desc: 'Vibrant action on our on-campus court.', category: 'sports' },
+    { src: '/photos/sports4.jpg', title: 'Volleyball Championship', desc: 'Cohesive teamwork and high-energy volleyball matches.', category: 'sports' }
   ];
+
+  const filteredItems = activeFilter === 'all'
+    ? galleryItems
+    : galleryItems.filter(item => item.category === activeFilter);
 
   return (
     <div>
@@ -37,8 +54,38 @@ export const Gallery: React.FC = () => {
       <div className="container">
         {/* Photo Gallery */}
         <h2 className="section-title">Photo Gallery</h2>
+
+        {/* Category Filters */}
+        <div className="gallery-filters">
+          <button 
+            className={`filter-btn ${activeFilter === 'all' ? 'active' : ''}`}
+            onClick={() => setActiveFilter('all')}
+          >
+            All Photos
+          </button>
+          <button 
+            className={`filter-btn ${activeFilter === 'campus' ? 'active' : ''}`}
+            onClick={() => setActiveFilter('campus')}
+          >
+            Campus & Leadership
+          </button>
+          <button 
+            className={`filter-btn ${activeFilter === 'academics' ? 'active' : ''}`}
+            onClick={() => setActiveFilter('academics')}
+          >
+            Academics & Study
+          </button>
+          <button 
+            className={`filter-btn ${activeFilter === 'sports' ? 'active' : ''}`}
+            onClick={() => setActiveFilter('sports')}
+          >
+            Sports & Athletics
+          </button>
+        </div>
+
+        {/* Gallery Grid */}
         <div className="gallery-grid">
-          {galleryItems.map((item, index) => (
+          {filteredItems.map((item, index) => (
             <div key={index} className="gallery-item">
               <img src={item.src} alt={item.title} />
               <div className="item-overlay">

@@ -823,6 +823,34 @@ a {
     font-weight: bold;
 }
 
+/* Gallery Filter Buttons */
+.gallery-filters {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    background-color: var(--white);
+    border: 2px solid var(--primary-green);
+    color: var(--primary-green);
+    padding: 8px 22px;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: var(--transition);
+    box-shadow: var(--shadow-subtle);
+}
+
+.filter-btn:hover, .filter-btn.active {
+    background-color: var(--primary-green);
+    color: var(--white);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-medium);
+}
+
 /* Photo Gallery & Grid System */
 .gallery-grid {
     display: grid;
