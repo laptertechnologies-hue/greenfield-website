@@ -6,6 +6,7 @@ import { Academics } from './pages/Academics';
 import { Admissions } from './pages/Admissions';
 import { Gallery } from './pages/Gallery';
 import { Contact } from './pages/Contact';
+import { Portal } from './pages/Portal';
 
 function App() {
   return (
@@ -18,6 +19,8 @@ function App() {
           <Route path="/admissions" element={<Admissions />} />
           <Route path="/gallery" element={<Gallery />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/portal" element={<Portal />} />
+          <Route path="/login" element={<Portal />} />
           {/* Catch-all redirect to Home */}
           <Route path="*" element={<Home />} />
         </Routes>

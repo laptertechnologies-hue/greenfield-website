@@ -1,21 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink, Link } from 'react-router-dom';
+import { BottomNav } from './BottomNav';
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [formattedDate, setFormattedDate] = useState('');
-
-  const toggleMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
-  };
-
-  const closeMenu = () => {
-    setIsMobileMenuOpen(false);
-  };
 
   useEffect(() => {
     const now = new Date();
@@ -28,10 +20,8 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
     setFormattedDate(now.toLocaleDateString('en-US', options));
   }, []);
 
-  const loginUrl = "https://gfss.portal.laptertech.store";
-
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+    <div className="app-layout-wrapper" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       {/* Skip link for accessibility */}
       <a href="#main-content" className="skip-to-content" style={{ display: 'none' }}>
         Skip to main content
@@ -40,7 +30,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
       {/* Header Section */}
       <header className="header" role="banner">
         <div className="header-container">
-          <Link to="/" className="logo-container" aria-label="GREENFIELD SECONDARY SCHOOL Home" onClick={closeMenu}>
+          <Link to="/" className="logo-container" aria-label="GREENFIELD SECONDARY SCHOOL Home">
             <img 
               src="/Green-field-secondary-school.jpg" 
               alt="GREENFIELD SECONDARY SCHOOL Logo" 
@@ -54,45 +44,41 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
             </div>
           </Link>
           
-          <button 
-            className="menu-toggle" 
-            onClick={toggleMenu} 
-            aria-label="Toggle navigation menu" 
-            aria-expanded={isMobileMenuOpen}
-          >
-            ☰
-          </button>
-          
-          <nav className={`nav ${isMobileMenuOpen ? 'active' : ''}`} role="navigation" aria-label="Main navigation">
-            <NavLink to="/" className={({ isActive }) => isActive ? 'active' : ''} onClick={closeMenu} end>
+          <nav className="nav desktop-nav" role="navigation" aria-label="Main navigation">
+            <NavLink to="/" className={({ isActive }) => isActive ? 'active' : ''} end>
               <i className="fas fa-home" aria-hidden="true"></i> Home
             </NavLink>
-            <NavLink to="/academics" className={({ isActive }) => isActive ? 'active' : ''} onClick={closeMenu}>
+            <NavLink to="/academics" className={({ isActive }) => isActive ? 'active' : ''}>
               <i className="fas fa-graduation-cap" aria-hidden="true"></i> Academics
             </NavLink>
-            <NavLink to="/admissions" className={({ isActive }) => isActive ? 'active' : ''} onClick={closeMenu}>
-              <i className="fas fa-sign-in-alt" aria-hidden="true"></i> Admissions
+            <NavLink to="/admissions" className={({ isActive }) => isActive ? 'active' : ''}>
+              <i className="fas fa-file-signature" aria-hidden="true"></i> Admissions
             </NavLink>
-            <NavLink to="/gallery" className={({ isActive }) => isActive ? 'active' : ''} onClick={closeMenu}>
+            <NavLink to="/gallery" className={({ isActive }) => isActive ? 'active' : ''}>
               <i className="fas fa-images" aria-hidden="true"></i> Gallery
             </NavLink>
-            <NavLink to="/about" className={({ isActive }) => isActive ? 'active' : ''} onClick={closeMenu}>
+            <NavLink to="/about" className={({ isActive }) => isActive ? 'active' : ''}>
               <i className="fas fa-info-circle" aria-hidden="true"></i> About
             </NavLink>
-            <NavLink to="/contact" className={({ isActive }) => isActive ? 'active' : ''} onClick={closeMenu}>
-              <i className="fas fa-address-book" aria-hidden="true"></i> Contact
+            <NavLink to="/contact" className={({ isActive }) => isActive ? 'active' : ''}>
+              <i className="fas fa-envelope" aria-hidden="true"></i> Contact
             </NavLink>
             
-            {/* Login Button in Navigation */}
-            <a href={loginUrl} className="login-btn" target="_blank" rel="noopener noreferrer">
-              <i className="fas fa-sign-in-alt"></i> Login
-            </a>
+            {/* In-App Portal / Login Nav Link */}
+            <NavLink to="/portal" className="login-btn">
+              <i className="fas fa-user-shield"></i> Portal Login
+            </NavLink>
           </nav>
+
+          {/* Quick in-app portal button for header on compact viewports */}
+          <Link to="/portal" className="header-quick-portal-btn" title="Open In-App Portal">
+            <i className="fas fa-user-shield"></i> <span>Portal</span>
+          </Link>
         </div>
       </header>
 
       {/* Main Content Area */}
-      <main id="main-content" style={{ flex: '1 0 auto' }}>
+      <main id="main-content" className="app-main-content" style={{ flex: '1 0 auto' }}>
         {children}
       </main>
 
@@ -120,12 +106,13 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
           <div className="footer-column">
             <h3>Quick Links</h3>
             <ul className="footer-links">
-              <li><Link to="/" onClick={closeMenu}><i className="fas fa-chevron-right"></i> Home</Link></li>
-              <li><Link to="/academics" onClick={closeMenu}><i className="fas fa-chevron-right"></i> Academics</Link></li>
-              <li><Link to="/admissions" onClick={closeMenu}><i className="fas fa-chevron-right"></i> Admissions</Link></li>
-              <li><Link to="/gallery" onClick={closeMenu}><i className="fas fa-chevron-right"></i> Gallery</Link></li>
-              <li><Link to="/about" onClick={closeMenu}><i className="fas fa-chevron-right"></i> About Us</Link></li>
-              <li><Link to="/contact" onClick={closeMenu}><i className="fas fa-chevron-right"></i> Contact</Link></li>
+              <li><Link to="/"><i className="fas fa-chevron-right"></i> Home</Link></li>
+              <li><Link to="/academics"><i className="fas fa-chevron-right"></i> Academics</Link></li>
+              <li><Link to="/admissions"><i className="fas fa-chevron-right"></i> Admissions</Link></li>
+              <li><Link to="/gallery"><i className="fas fa-chevron-right"></i> Gallery</Link></li>
+              <li><Link to="/about"><i className="fas fa-chevron-right"></i> About Us</Link></li>
+              <li><Link to="/contact"><i className="fas fa-chevron-right"></i> Contact</Link></li>
+              <li><Link to="/portal"><i className="fas fa-chevron-right"></i> Student/Staff Portal</Link></li>
             </ul>
           </div>
 
@@ -160,6 +147,9 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
           </p>
         </div>
       </footer>
+
+      {/* Native Bottom Navigation Bar */}
+      <BottomNav />
     </div>
   );
 };
