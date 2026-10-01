@@ -65,13 +65,13 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
             </NavLink>
             
             {/* In-App Portal / Login Nav Link */}
-            <NavLink to="/portal" className="login-btn">
+            <NavLink to="/app" className="login-btn">
               <i className="fas fa-user-shield"></i> Portal Login
             </NavLink>
           </nav>
 
           {/* Quick in-app portal button for header on compact viewports */}
-          <Link to="/portal" className="header-quick-portal-btn" title="Open In-App Portal">
+          <Link to="/app" className="header-quick-portal-btn" title="Open In-App Portal">
             <i className="fas fa-user-shield"></i> <span>Portal</span>
           </Link>
         </div>
@@ -112,7 +112,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
               <li><Link to="/gallery"><i className="fas fa-chevron-right"></i> Gallery</Link></li>
               <li><Link to="/about"><i className="fas fa-chevron-right"></i> About Us</Link></li>
               <li><Link to="/contact"><i className="fas fa-chevron-right"></i> Contact</Link></li>
-              <li><Link to="/portal"><i className="fas fa-chevron-right"></i> Student/Staff Portal</Link></li>
+              <li><Link to="/app"><i className="fas fa-chevron-right"></i> Student/Staff Portal</Link></li>
             </ul>
           </div>
 

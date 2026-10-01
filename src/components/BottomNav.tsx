@@ -40,7 +40,7 @@ export const BottomNav: React.FC = () => {
         </NavLink>
 
         <NavLink 
-          to="/portal" 
+          to="/app" 
           className={({ isActive }) => `bottom-nav-item bottom-nav-portal ${isActive ? 'active' : ''}`}
           aria-label="Portal Login"
         >
