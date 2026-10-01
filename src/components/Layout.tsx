@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink, Link } from 'react-router-dom';
 import { BottomNav } from './BottomNav';
+import { AppInstallBanner } from './AppInstallBanner';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -120,7 +121,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
             <h3>Contact Information</h3>
             <p style={{ marginBottom: '10px' }}>
               <i className="fas fa-map-marker-alt" style={{ marginRight: '10px', color: 'var(--gold)' }}></i>
-              Kiruli Hill, Masindi Municipality, Masindi, Bunyoro Sub-region, Uganda
+              Kihande Hill, Masindi Municipality, Masindi, Bunyoro Sub-region, Uganda
             </p>
             <p style={{ marginBottom: '10px' }}>
               <i className="fas fa-phone" style={{ marginRight: '10px', color: 'var(--gold)' }}></i>
@@ -147,6 +148,9 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
           </p>
         </div>
       </footer>
+
+      {/* App Install Banner (shown on Android browsers only) */}
+      <AppInstallBanner />
 
       {/* Native Bottom Navigation Bar */}
       <BottomNav />

@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { updateSEO } from '../utils/seo';
+import { HeroSlideshow } from '../components/HeroSlideshow';
+import { AnnouncementsBar } from '../components/AnnouncementsBar';
 
 export const Home: React.FC = () => {
   useEffect(() => {
@@ -12,34 +14,11 @@ export const Home: React.FC = () => {
 
   return (
     <div>
-      {/* Hero Section */}
-      <section className="hero" id="home">
-        <video 
-          className="hero-video" 
-          autoPlay 
-          muted 
-          loop 
-          playsInline 
-          aria-label="Background video showing GREENFIELD SECONDARY SCHOOL campus"
-        >
-          <source src="/bkg.mp4" type="video/mp4" />
-          {/* Fallback image */}
-          <img 
-            src="/photos/school-campus-hero.jpg" 
-            alt="GREENFIELD SECONDARY SCHOOL Campus in Masindi - Aerial View" 
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
-          />
-        </video>
-        <div className="hero-overlay"></div>
-        <div className="hero-content">
-          <h1>GREENFIELD SECONDARY SCHOOL MASINDI</h1>
-          <p>'O' & 'A' Level Mixed Day & Boarding School | Ministry of Education PSS/G/17 | UNEB Centre U1385 | DIT Centre UVQF/1215</p>
-          <div>
-            <Link to="/admissions" className="btn">2026 Admission Open</Link>
-            <a href="#fees" className="btn btn-secondary">View Fees Structure</a>
-          </div>
-        </div>
-      </section>
+      {/* Dynamic Hero Slideshow (fetches from PostgreSQL API) */}
+      <HeroSlideshow />
+
+      {/* Live Announcements from DB */}
+      <AnnouncementsBar />
 
       {/* Statistics Banner */}
       <div className="stats-banner">
