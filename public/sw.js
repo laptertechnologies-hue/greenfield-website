@@ -1,9 +1,11 @@
-// Minimal service worker: makes the site installable and gives an offline fallback.
-const CACHE = 'gfss-v1';
-const SHELL = ['/', '/icon-192.png', '/icon-512.png'];
+// Service worker: offline fallback, push notifications, and automatic SPA routing
+const CACHE = 'gfss-v3';
+const SHELL = ['/', '/index.html', '/manifest.webmanifest', '/icon-192.png', '/icon-512.png'];
 
 self.addEventListener('install', (e) => {
-  e.waitUntil(caches.open(CACHE).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting()));
+  e.waitUntil(
+    caches.open(CACHE).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting())
+  );
 });
 
 self.addEventListener('activate', (e) => {
@@ -16,9 +18,19 @@ self.addEventListener('activate', (e) => {
 self.addEventListener('fetch', (e) => {
   const req = e.request;
   if (req.method !== 'GET' || new URL(req.url).origin !== self.location.origin) return;
-  // Pages: network first, fall back to cached shell when offline
+
+  // Pages / Navigations: network first; if 404 or offline, serve index.html
   if (req.mode === 'navigate') {
-    e.respondWith(fetch(req).catch(() => caches.match('/')));
+    e.respondWith(
+      fetch(req)
+        .then((res) => {
+          if (!res.ok && res.status === 404) {
+            return caches.match('/index.html').then((hit) => hit || caches.match('/')).then((hit) => hit || fetch('/'));
+          }
+          return res;
+        })
+        .catch(() => caches.match('/index.html').then((hit) => hit || caches.match('/')).then((hit) => hit || fetch('/')))
+    );
     return;
   }
   // Static assets: cache first, then network (and cache the result)

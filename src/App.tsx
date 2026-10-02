@@ -40,6 +40,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/app" element={<Suspense fallback={null}><PortalApp /></Suspense>} />
         <Route path="/app/*" element={<Suspense fallback={null}><PortalApp /></Suspense>} />
         <Route path="/*" element={<Website />} />
       </Routes>
