@@ -136,6 +136,33 @@ export function StaffHome() {
             </div>
           </section>
 
+          <section className="pa-panel">
+            <div className="pa-panel-head"><h3>Digital Learning & Elections</h3></div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '10px' }}>
+              <Link to="/app/holiday-work" style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                <i className="fas fa-book-reader" style={{ color: '#059669', fontSize: '1.2rem' }}></i>
+                <div>
+                  <strong style={{ fontSize: '0.85rem', display: 'block' }}>Holiday Work Packages</strong>
+                  <span style={{ fontSize: '0.72rem', color: '#64748b' }}>Post packages & grade student work</span>
+                </div>
+              </Link>
+              <Link to="/app/e-learning" style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                <i className="fas fa-graduation-cap" style={{ color: '#2563eb', fontSize: '1.2rem' }}></i>
+                <div>
+                  <strong style={{ fontSize: '0.85rem', display: 'block' }}>E-Learning & UNEB Notes</strong>
+                  <span style={{ fontSize: '0.72rem', color: '#64748b' }}>Upload syllabus material & papers</span>
+                </div>
+              </Link>
+              <Link to="/app/e-voting" style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                <i className="fas fa-vote-yea" style={{ color: '#d97706', fontSize: '1.2rem' }}></i>
+                <div>
+                  <strong style={{ fontSize: '0.85rem', display: 'block' }}>Prefect E-Voting</strong>
+                  <span style={{ fontSize: '0.72rem', color: '#64748b' }}>Live elections tally & results</span>
+                </div>
+              </Link>
+            </div>
+          </section>
+
           {/* Broadcast Circular Modal */}
           {showBroadcast && (
             <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>

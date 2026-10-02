@@ -13,6 +13,9 @@ import { ParentHome } from './screens/ParentHome';
 import { Results } from './screens/Results';
 import { Attendance } from './screens/Attendance';
 import { More } from './screens/More';
+import { HolidayWork } from './screens/HolidayWork';
+import { ELearning } from './screens/ELearning';
+import { EVoting } from './screens/EVoting';
 import './portal.css';
 import { AppInstallBanner } from '../components/AppInstallBanner';
 
@@ -58,6 +61,9 @@ function Routed() {
       <Route path="fees" element={<Guard staff={<Fees />} parent={<Fees />} />} />
       <Route path="results" element={<Guard parent={<Results />} />} />
       <Route path="attendance" element={<Guard parent={<Attendance />} />} />
+      <Route path="holiday-work" element={<Guard staff={<HolidayWork />} parent={<HolidayWork />} />} />
+      <Route path="e-learning" element={<Guard staff={<ELearning />} parent={<ELearning />} />} />
+      <Route path="e-voting" element={<Guard staff={<EVoting />} parent={<EVoting />} />} />
       <Route path="more" element={<Guard staff={<More />} parent={<More />} />} />
       <Route path="*" element={<Navigate to="/app" replace />} />
     </Routes>

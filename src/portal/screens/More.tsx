@@ -18,6 +18,9 @@ export function More() {
             <i className="fas fa-sliders" />Full Administration Panel
           </Link>
         )}
+        <Link to="/app/holiday-work"><i className="fas fa-book-reader" />Holiday Work Packages</Link>
+        <Link to="/app/e-learning"><i className="fas fa-graduation-cap" />E-Learning & UNEB Papers</Link>
+        <Link to="/app/e-voting"><i className="fas fa-vote-yea" />Prefect & Guild E-Voting</Link>
         <Link to="/app/home"><i className="fas fa-key" />Change Account PIN</Link>
         <button
           onClick={async () => {

@@ -139,6 +139,95 @@ export function ParentHome() {
             <small>See statement and how to pay</small>
           </Link>
 
+          {/* Digital Academy & Student Life Hub */}
+          <section className="pa-panel" style={{ padding: '16px' }}>
+            <div className="pa-panel-head" style={{ marginBottom: '12px' }}>
+              <h3>Digital Academy & Student Life</h3>
+            </div>
+            <div style={{ display: 'grid', gap: '10px' }}>
+              <Link
+                to="/app/holiday-work"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  padding: '12px 14px',
+                  background: '#f8fafc',
+                  borderRadius: '14px',
+                  border: '1px solid #e2e8f0',
+                  textDecoration: 'none',
+                  color: 'inherit'
+                }}
+              >
+                <div style={{ width: '42px', height: '42px', borderRadius: '10px', background: '#ecfdf5', color: '#059669', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem', flexShrink: 0 }}>
+                  <i className="fas fa-book-reader" />
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <strong style={{ fontSize: '0.88rem', color: 'var(--g-900)' }}>Holiday Work Packages</strong>
+                    <span style={{ fontSize: '0.68rem', padding: '2px 6px', borderRadius: '6px', background: '#d1fae5', color: '#065f46', fontWeight: 600 }}>Active</span>
+                  </div>
+                  <span style={{ fontSize: '0.74rem', color: '#64748b', display: 'block' }}>Official packages & student assignments submission</span>
+                </div>
+                <i className="fas fa-chevron-right" style={{ color: '#cbd5e1', fontSize: '0.85rem' }} />
+              </Link>
+
+              <Link
+                to="/app/e-learning"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  padding: '12px 14px',
+                  background: '#f8fafc',
+                  borderRadius: '14px',
+                  border: '1px solid #e2e8f0',
+                  textDecoration: 'none',
+                  color: 'inherit'
+                }}
+              >
+                <div style={{ width: '42px', height: '42px', borderRadius: '10px', background: '#eff6ff', color: '#2563eb', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem', flexShrink: 0 }}>
+                  <i className="fas fa-graduation-cap" />
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <strong style={{ fontSize: '0.88rem', color: 'var(--g-900)' }}>E-Learning & UNEB Revision</strong>
+                    <span style={{ fontSize: '0.68rem', padding: '2px 6px', borderRadius: '6px', background: '#dbeafe', color: '#1e40af', fontWeight: 600 }}>S.1 - S.6</span>
+                  </div>
+                  <span style={{ fontSize: '0.74rem', color: '#64748b', display: 'block' }}>Lesson notes, past exams & recorded video classes</span>
+                </div>
+                <i className="fas fa-chevron-right" style={{ color: '#cbd5e1', fontSize: '0.85rem' }} />
+              </Link>
+
+              <Link
+                to="/app/e-voting"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  padding: '12px 14px',
+                  background: '#f8fafc',
+                  borderRadius: '14px',
+                  border: '1px solid #e2e8f0',
+                  textDecoration: 'none',
+                  color: 'inherit'
+                }}
+              >
+                <div style={{ width: '42px', height: '42px', borderRadius: '10px', background: '#fef3c7', color: '#d97706', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem', flexShrink: 0 }}>
+                  <i className="fas fa-vote-yea" />
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <strong style={{ fontSize: '0.88rem', color: 'var(--g-900)' }}>Prefect & Guild E-Voting</strong>
+                    <span style={{ fontSize: '0.68rem', padding: '2px 6px', borderRadius: '6px', background: '#fde68a', color: '#92400e', fontWeight: 600 }}>Live Ballot</span>
+                  </div>
+                  <span style={{ fontSize: '0.74rem', color: '#64748b', display: 'block' }}>Vote Head Boy, Head Girl & prefects with live tallies</span>
+                </div>
+                <i className="fas fa-chevron-right" style={{ color: '#cbd5e1', fontSize: '0.85rem' }} />
+              </Link>
+            </div>
+          </section>
+
           <section className="pa-panel">
             <div className="pa-panel-head"><h3>School Circulars & Communications</h3></div>
             <ul className="pa-notices">
