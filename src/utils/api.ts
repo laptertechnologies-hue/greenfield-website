@@ -1,5 +1,5 @@
 // Central API utility for the GFSS website and app
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
+const API_URL = import.meta.env.VITE_API_URL || 'https://api.laptertech.store/api';
 
 /**
  * Generic API fetch with timeout and error handling
