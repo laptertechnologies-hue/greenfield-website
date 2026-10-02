@@ -14,8 +14,8 @@ export function Results() {
         <>
           <section className="pa-hero pa-hero--slim">
             <small>{child.name}, {SCHOOL.term}</small>
-            <h2>{d.marks ? `${d.average}% average` : '…'}</h2>
-            <p>{d.marks ? `Overall grade ${grade(d.average)} across ${d.marks.length} subjects` : ''}</p>
+            <h2>{d.hasMarks && d.average !== null ? `${d.average}% average` : (d.marks ? 'Marks Pending' : '…')}</h2>
+            <p>{d.hasMarks && d.average !== null ? `Overall grade ${grade(d.average)} across ${d.marks?.length || 0} subjects` : 'Term assessments are being compiled by the academic department.'}</p>
           </section>
           <section className="pa-panel"><MarksTable marks={d.marks} /></section>
         </>

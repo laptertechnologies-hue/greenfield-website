@@ -13,6 +13,12 @@ export function More() {
         <div><h2>{user?.name}</h2><p>{user?.title}</p></div>
       </section>
       <nav className="pa-menu">
+        {user?.role === 'staff' && (
+          <Link to="/admin" style={{ color: 'var(--g-700)', fontWeight: 600 }}>
+            <i className="fas fa-sliders" />Full Administration Panel
+          </Link>
+        )}
+        <Link to="/app/home"><i className="fas fa-key" />Change Account PIN</Link>
         <a href={`tel:${SCHOOL.phone.replace(/\s/g, '')}`}><i className="fas fa-phone" />Call the school</a>
         <a href={`mailto:${SCHOOL.email}`}><i className="fas fa-envelope" />Email the school</a>
         <Link to="/"><i className="fas fa-globe" />School website</Link>

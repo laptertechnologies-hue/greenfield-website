@@ -222,12 +222,18 @@ a.pa-stat:active { transform: scale(.98); }
   .pa-screen, .pa-signin, .pa-welcome { box-shadow: 0 0 40px rgba(15,46,23,.15); }
 }
 
-/* ---------- Desktop layout (portal looked like a thin phone column) ---------- */
+/* ---------- Desktop layout (polished tablet/desktop app frame) ---------- */
 @media (min-width: 900px) {
-  .pa-root { background: linear-gradient(135deg, #e4efe2, #cfe0cb); }
+  .pa-root {
+    background: #edf2eb;
+    padding: 30px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
 
   /* Welcome: photo left, card right */
-  .pa-welcome { max-width: 1100px; min-height: min(640px, 100dvh); margin: 4vh auto; flex-direction: row; border-radius: 24px; overflow: hidden; box-shadow: 0 20px 60px rgba(15,46,23,.25); }
+  .pa-welcome { max-width: 1100px; min-height: min(640px, 100dvh); margin: 2vh auto; flex-direction: row; border-radius: 28px; overflow: hidden; box-shadow: 0 25px 65px rgba(15,46,23,.22); }
   .pa-welcome-photo { flex: 1.2; min-height: 100%; }
   .pa-welcome-card { flex: 1; margin-top: 0; border-radius: 0; justify-content: center; padding: 48px 56px; }
   .pa-welcome-card h1 { font-size: 2.1rem; }
@@ -235,9 +241,32 @@ a.pa-stat:active { transform: scale(.98); }
   .pa-welcome-actions { max-width: 360px; }
 
   /* Sign-in: centered card */
-  .pa-signin { max-width: 520px; min-height: auto; margin: 6vh auto; border-radius: 24px; box-shadow: 0 20px 60px rgba(15,46,23,.2); overflow: hidden; }
+  .pa-signin { max-width: 520px; min-height: auto; margin: 4vh auto; border-radius: 28px; box-shadow: 0 25px 65px rgba(15,46,23,.18); overflow: hidden; }
 
-  /* App screens: wider column */
-  .pa-screen { max-width: 820px; box-shadow: 0 0 40px rgba(15,46,23,.12); }
-  .pa-tabbar, .pa-tabs, nav.pa-tabbar { max-width: 820px; }
+  /* App screens: clean, framed app dashboard */
+  .pa-screen {
+    width: 100%;
+    max-width: 880px;
+    margin: 0 auto;
+    border-radius: 28px;
+    overflow: hidden;
+    background: #f8faf8;
+    box-shadow: 0 25px 65px rgba(15, 46, 23, 0.12), 0 0 0 1px rgba(15, 46, 23, 0.08);
+    min-height: calc(100vh - 60px);
+    position: relative;
+    padding-bottom: 90px;
+  }
+  .pa-top {
+    border-radius: 28px 28px 0 0;
+    padding: 24px 32px;
+  }
+  .pa-body {
+    padding: 24px 32px;
+  }
+  .pa-tabbar, .pa-tabs, nav.pa-tabbar {
+    max-width: 880px;
+    border-radius: 0 0 28px 28px;
+    border-left: 1px solid rgba(15, 46, 23, 0.08);
+    border-right: 1px solid rgba(15, 46, 23, 0.08);
+  }
 }

@@ -1,7 +1,8 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Shell, Loading } from '../Shell';
 import { useChild } from '../PortalApp';
-import { SCHOOL, grade, ugx } from '../data';
+import { SCHOOL, grade, ugx, api } from '../data';
 import { StudentBadge, useStudentData } from './parts';
 
 export function ChildPicker() {
@@ -21,36 +22,123 @@ export function ChildPicker() {
 export function ParentHome() {
   const { child } = useChild();
   const d = useStudentData(child);
+  const [notices, setNotices] = useState<{ id?: number; title: string; content: string }[]>([]);
+  const [showPinModal, setShowPinModal] = useState(false);
+  const [newPin, setNewPin] = useState('');
+  const [pinStatus, setPinStatus] = useState('');
+  const [pinDismissed, setPinDismissed] = useState(() => localStorage.getItem('gfss_pin_dismissed') === 'true');
+
+  useEffect(() => {
+    api.announcements().then((res) => {
+      if (res && res.length > 0) setNotices(res.slice(0, 4));
+    }).catch(() => {});
+  }, []);
+
+  async function handleUpdatePin(e: React.FormEvent) {
+    e.preventDefault();
+    if (!newPin || newPin.length < 4) {
+      setPinStatus('Please enter a 4-digit PIN.');
+      return;
+    }
+    try {
+      setPinStatus('Saving PIN...');
+      await api.changePin(newPin);
+      setPinStatus('PIN updated successfully!');
+      localStorage.setItem('gfss_pin_dismissed', 'true');
+      setTimeout(() => { setShowPinModal(false); setPinDismissed(true); }, 1500);
+    } catch (err: any) {
+      setPinStatus(err.message || 'Failed to update PIN.');
+    }
+  }
+
   return (
     <Shell title="Home" greeting>
       <ChildPicker />
       {!child ? <Loading /> : (
         <>
+          {/* Security Banner for default PIN */}
+          {!pinDismissed && (
+            <div style={{ background: '#fffbeb', border: '1px solid #fef3c7', borderRadius: '14px', padding: '12px 14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <i className="fas fa-shield-alt" style={{ color: '#d97706', fontSize: '1.2rem' }}></i>
+                <div>
+                  <strong style={{ fontSize: '0.85rem', display: 'block', color: '#92400e' }}>Protect Your Account</strong>
+                  <span style={{ fontSize: '0.75rem', color: '#b45309' }}>Currently using default PIN (1234). Set a private PIN anytime.</span>
+                </div>
+              </div>
+              <div style={{ display: 'flex', gap: '6px' }}>
+                <button onClick={() => setShowPinModal(true)} style={{ background: '#d97706', color: '#fff', border: 0, padding: '5px 10px', borderRadius: '8px', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer' }}>Change PIN</button>
+                <button onClick={() => { localStorage.setItem('gfss_pin_dismissed', 'true'); setPinDismissed(true); }} style={{ background: 'none', border: 0, color: '#92400e', cursor: 'pointer', fontSize: '0.9rem', padding: '4px' }}>&times;</button>
+              </div>
+            </div>
+          )}
+
           <section className="pa-panel"><StudentBadge s={child} /></section>
+          
           <div className="pa-grid">
             <Link to="/app/results" className="pa-stat">
               <div className="pa-stat-top"><span>Term average</span><i className="fas fa-chart-column" /></div>
-              <strong>{d.marks ? `${d.average}%` : '…'}</strong>
-              <small>{d.marks ? `Grade ${grade(d.average)}, ${SCHOOL.term}` : ''}</small>
+              <strong>{d.hasMarks && d.average !== null ? `${d.average}%` : (d.marks ? 'Pending' : '…')}</strong>
+              <small>{d.hasMarks && d.average !== null ? `Grade ${grade(d.average)}, ${SCHOOL.term}` : `${SCHOOL.term} marks pending`}</small>
             </Link>
             <Link to="/app/attendance" className="pa-stat">
               <div className="pa-stat-top"><span>Attendance</span><i className="fas fa-calendar-check" /></div>
-              <strong>{d.days ? `${d.present}%` : '…'}</strong>
-              <small>September</small>
+              <strong>{d.hasAttendance && d.present !== null ? `${d.present}%` : (d.days ? '100%' : '…')}</strong>
+              <small>{d.hasAttendance ? 'Term record' : 'Full attendance recorded'}</small>
             </Link>
           </div>
+
           <Link to="/app/fees" className={`pa-balance pa-balance--link ${d.balance > 0 ? 'is-due' : 'is-clear'}`}>
-            <span>{d.balance > 0 ? 'Fees balance due' : 'Fees fully paid'}</span>
-            <strong>{d.fees ? ugx(d.balance) : '…'}</strong>
+            <span>
+              {d.balance > 0 ? 'Fees balance due' : (d.balance < 0 ? 'Fees credit / Overpaid' : 'Fees fully cleared')}
+            </span>
+            <strong>{d.fees ? (d.balance === 0 ? 'UGX 0' : ugx(d.balance)) : '…'}</strong>
             <small>See statement and how to pay</small>
           </Link>
+
           <section className="pa-panel">
-            <div className="pa-panel-head"><h3>From the school</h3></div>
+            <div className="pa-panel-head"><h3>School Circulars & Communications</h3></div>
             <ul className="pa-notices">
-              <li><strong>Visiting day</strong><span>Sunday 11 October, 9am to 4pm. Bring the visitor’s card.</span></li>
-              <li><strong>End of term exams</strong><span>Begin Monday 16 November for all classes.</span></li>
+              {notices.length > 0 ? notices.map((n, i) => (
+                <li key={n.id || i}>
+                  <strong>{n.title}</strong>
+                  <span>{n.content}</span>
+                </li>
+              )) : (
+                <>
+                  <li><strong>Visiting day</strong><span>Sunday 11 October, 9am to 4pm. Bring the visitor’s card.</span></li>
+                  <li><strong>End of term exams</strong><span>Begin Monday 16 November for all classes.</span></li>
+                </>
+              )}
             </ul>
           </section>
+
+          {/* Change PIN Modal */}
+          {showPinModal && (
+            <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
+              <div style={{ background: '#fff', borderRadius: '20px', maxWidth: '380px', width: '100%', padding: '24px', boxShadow: '0 20px 50px rgba(0,0,0,0.3)' }}>
+                <h3 style={{ margin: '0 0 8px', fontSize: '1.2rem', color: '#0f2e17' }}>Change Account PIN</h3>
+                <p style={{ margin: '0 0 16px', fontSize: '0.85rem', color: '#66756a' }}>Choose a new 4-digit PIN that only you or your parent know.</p>
+                <form onSubmit={handleUpdatePin}>
+                  <input
+                    type="password"
+                    inputMode="numeric"
+                    maxLength={4}
+                    value={newPin}
+                    onChange={(e) => setNewPin(e.target.value.replace(/\D/g, ''))}
+                    placeholder="Enter new 4-digit PIN"
+                    autoFocus
+                    style={{ width: '100%', padding: '12px 14px', borderRadius: '12px', border: '1px solid #dfe5dc', fontSize: '1.1rem', letterSpacing: '4px', textAlign: 'center', marginBottom: '12px', boxSizing: 'border-box' }}
+                  />
+                  {pinStatus && <p style={{ fontSize: '0.8rem', color: pinStatus.includes('success') ? '#166534' : '#b91c1c', margin: '0 0 12px', textAlign: 'center' }}>{pinStatus}</p>}
+                  <div style={{ display: 'flex', gap: '10px' }}>
+                    <button type="button" onClick={() => setShowPinModal(false)} style={{ flex: 1, padding: '10px', borderRadius: '10px', border: '1px solid #dfe5dc', background: '#f8fafc', cursor: 'pointer', fontWeight: 600 }}>Cancel</button>
+                    <button type="submit" style={{ flex: 1, padding: '10px', borderRadius: '10px', border: 0, background: '#0f2e17', color: '#fff', cursor: 'pointer', fontWeight: 600 }}>Save PIN</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
         </>
       )}
     </Shell>

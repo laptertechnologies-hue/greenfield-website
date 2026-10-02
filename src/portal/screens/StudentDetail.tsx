@@ -25,6 +25,32 @@ export function StudentDetail() {
         {tab === 'fees' && <FeeStatement fees={d.fees} />}
         {tab === 'attendance' && <AttendanceGrid days={d.days} />}
       </section>
+
+      {/* Staff Actions */}
+      <section className="pa-panel" style={{ marginTop: '12px' }}>
+        <div className="pa-panel-head"><h3>Account Administration</h3></div>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
+          <div>
+            <strong style={{ fontSize: '0.88rem', display: 'block' }}>Portal Access PIN</strong>
+            <span style={{ fontSize: '0.78rem', color: '#66756a' }}>Reset PIN if student or parent forgets it</span>
+          </div>
+          <button
+            onClick={async () => {
+              if (window.confirm(`Reset portal PIN for ${s.name} back to default (1234)?`)) {
+                try {
+                  const res = await api.resetPin(s.id, '1234');
+                  alert(res.message || 'PIN reset to 1234.');
+                } catch (e: any) {
+                  alert(e.message || 'Failed to reset PIN.');
+                }
+              }
+            }}
+            style={{ padding: '8px 14px', borderRadius: '10px', border: '1px solid #dfe5dc', background: '#fff', cursor: 'pointer', fontSize: '0.82rem', fontWeight: 600, color: '#0f2e17' }}
+          >
+            <i className="fas fa-key" style={{ marginRight: '6px' }}></i>Reset PIN (1234)
+          </button>
+        </div>
+      </section>
     </Shell>
   );
 }

@@ -61,6 +61,40 @@ export function StaffHome() {
             <div className="pa-meter"><span style={{ width: `${(o.feesCollected / o.feesExpected) * 100}%` }} /></div>
             <p className="pa-meter-text"><strong>{ugx(o.feesCollected)}</strong> of {ugx(o.feesExpected)} collected</p>
           </section>
+
+          <section className="pa-panel">
+            <div className="pa-panel-head"><h3>School Administration</h3></div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+              <Link to="/admin" style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                <i className="fas fa-sliders" style={{ color: 'var(--g-700)', fontSize: '1.2rem' }}></i>
+                <div>
+                  <strong style={{ fontSize: '0.85rem', display: 'block' }}>Admin Console</strong>
+                  <span style={{ fontSize: '0.72rem', color: '#64748b' }}>Admissions & circulars</span>
+                </div>
+              </Link>
+              <Link to="/app/marks" style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                <i className="fas fa-file-excel" style={{ color: '#166534', fontSize: '1.2rem' }}></i>
+                <div>
+                  <strong style={{ fontSize: '0.85rem', display: 'block' }}>Excel Marks Sheet</strong>
+                  <span style={{ fontSize: '0.72rem', color: '#64748b' }}>Batch paste & save</span>
+                </div>
+              </Link>
+              <Link to="/app/fees" style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                <i className="fas fa-receipt" style={{ color: '#d97706', fontSize: '1.2rem' }}></i>
+                <div>
+                  <strong style={{ fontSize: '0.85rem', display: 'block' }}>Fee Collection</strong>
+                  <span style={{ fontSize: '0.72rem', color: '#64748b' }}>Record payments</span>
+                </div>
+              </Link>
+              <Link to="/app/students" style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                <i className="fas fa-key" style={{ color: '#2563eb', fontSize: '1.2rem' }}></i>
+                <div>
+                  <strong style={{ fontSize: '0.85rem', display: 'block' }}>PIN Resets</strong>
+                  <span style={{ fontSize: '0.72rem', color: '#64748b' }}>Student directory</span>
+                </div>
+              </Link>
+            </div>
+          </section>
         </>
       )}
     </Shell>

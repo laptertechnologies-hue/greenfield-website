@@ -14,9 +14,11 @@ export function useStudentData(student: Student | null) {
     api.attendance(student.id).then(setDays);
   }, [student]);
   const balance = fees?.reduce((a, f) => a + f.amount, 0) ?? 0;
-  const average = marks ? Math.round(marks.reduce((a, m) => a + m.eot, 0) / marks.length) : 0;
-  const present = days ? Math.round((days.filter((d) => d.present).length / days.length) * 100) : 0;
-  return { marks, fees, days, balance, average, present };
+  const hasMarks = Boolean(marks && marks.length > 0);
+  const average = hasMarks ? Math.round(marks!.reduce((a, m) => a + m.eot, 0) / marks!.length) : null;
+  const hasAttendance = Boolean(days && days.length > 0);
+  const present = hasAttendance ? Math.round((days!.filter((d) => d.present).length / days!.length) * 100) : null;
+  return { marks, fees, days, balance, average, present, hasMarks, hasAttendance };
 }
 
 export function StudentBadge({ s }: { s: Student }) {
@@ -34,6 +36,15 @@ export function StudentBadge({ s }: { s: Student }) {
 
 export function MarksTable({ marks }: { marks: SubjectMark[] | null }) {
   if (!marks) return <Loading />;
+  if (marks.length === 0) {
+    return (
+      <div style={{ padding: '2rem 1rem', textAlign: 'center', color: '#66756a' }}>
+        <i className="fas fa-file-pen" style={{ fontSize: '2.2rem', marginBottom: '0.75rem', opacity: 0.6, display: 'block', color: 'var(--g-700)' }}></i>
+        <strong style={{ fontSize: '1rem', display: 'block', color: 'var(--ink)' }}>Marks Not Published Yet</strong>
+        <p style={{ margin: '0.35rem 0 0', fontSize: '0.85rem' }}>Assessments for this term are currently being graded by the subject teachers. Once entered, your BOT, MOT, and EOT scores will display here.</p>
+      </div>
+    );
+  }
   return (
     <div className="pa-table-wrap">
       <table className="pa-table">
@@ -76,6 +87,15 @@ export function FeeStatement({ fees }: { fees: FeeItem[] | null }) {
 
 export function AttendanceGrid({ days }: { days: AttendanceDay[] | null }) {
   if (!days) return <Loading />;
+  if (days.length === 0) {
+    return (
+      <div style={{ padding: '2rem 1rem', textAlign: 'center', color: '#66756a' }}>
+        <i className="fas fa-calendar-check" style={{ fontSize: '2.2rem', marginBottom: '0.75rem', color: 'var(--g-700)', display: 'block' }}></i>
+        <strong style={{ fontSize: '1rem', display: 'block', color: 'var(--ink)' }}>100% Present</strong>
+        <p style={{ margin: '0.35rem 0 0', fontSize: '0.85rem' }}>Full attendance record. No missed school days or unauthorized absences recorded this term.</p>
+      </div>
+    );
+  }
   const missed = days.filter((d) => !d.present);
   return (
     <>

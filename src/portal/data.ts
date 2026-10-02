@@ -99,6 +99,27 @@ export const api = {
     const r = await call<{ saved: number }>('/marks', { method: 'POST', body: JSON.stringify({ term: SCHOOL.term, entries }) });
     return r.saved;
   },
+
+  changePin: (newPin: string, currentPin?: string) =>
+    call<{ ok: boolean; message: string }>('/change-pin', {
+      method: 'POST',
+      body: JSON.stringify({ newPin, currentPin }),
+    }),
+
+  resetPin: (studentId: string, newPin?: string) =>
+    call<{ ok: boolean; message: string }>('/reset-pin', {
+      method: 'POST',
+      body: JSON.stringify({ studentId, newPin }),
+    }),
+
+  announcements: async () => {
+    try {
+      const res = await fetch(`${API}/announcements`);
+      return (await res.json()) as { id: number; title: string; content: string; date?: string; priority?: string }[];
+    } catch {
+      return [];
+    }
+  },
 };
 
 export const ugx = (n: number) => 'UGX ' + Math.abs(n).toLocaleString('en-UG');
