@@ -19,6 +19,19 @@ export function More() {
           </Link>
         )}
         <Link to="/app/home"><i className="fas fa-key" />Change Account PIN</Link>
+        <button
+          onClick={async () => {
+            const evt = (window as any).__gfssInstallPrompt;
+            if (evt) {
+              evt.prompt();
+            } else {
+              alert('To install Greenfield App on your phone:\n1. Tap the three dots (⋮) at the top-right of your browser.\n2. Tap "Install app" or "Add to Home screen".\n3. Tap "Install".');
+            }
+          }}
+          style={{ color: 'var(--g-700)', fontWeight: 600 }}
+        >
+          <i className="fas fa-download" />Install App on Phone
+        </button>
         <a href={`tel:${SCHOOL.phone.replace(/\s/g, '')}`}><i className="fas fa-phone" />Call the school</a>
         <a href={`mailto:${SCHOOL.email}`}><i className="fas fa-envelope" />Email the school</a>
         <Link to="/"><i className="fas fa-globe" />School website</Link>

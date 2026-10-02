@@ -9,9 +9,6 @@ const PLAY_STORE_URL =
   'https://play.google.com/store/apps/details?id=com.greenfield.secondary.school';
 const PLAY_STORE_LIVE = import.meta.env.VITE_PLAY_STORE_LIVE === 'true';
 
-const DISMISS_KEY = 'gfss_app_banner_dismissed_at';
-const DISMISS_DAYS = 3;
-
 const isStandalone = () =>
   window.matchMedia('(display-mode: standalone)').matches ||
   (navigator as any).standalone === true;
@@ -27,31 +24,28 @@ export const AppInstallBanner: React.FC = () => {
 
   useEffect(() => {
     const isNative = !!(window as any).Capacitor?.isNativePlatform?.();
-    const installed = localStorage.getItem('gfss_installed') === 'true';
-    const dismissedAt = Number(localStorage.getItem(DISMISS_KEY) || 0);
-    const recentlyDismissed = Date.now() - dismissedAt < DISMISS_DAYS * 86400000;
 
-    // Already running as an installed app, or on a phone-less device: no banner
-    if (isNative || isStandalone() || installed || recentlyDismissed) return;
-    if (!isAndroid && !isIOS) return;
+    // Only hide if currently running in standalone PWA window
+    if (isNative || isStandalone()) return;
 
     setCanPrompt(!!window.__gfssInstallPrompt);
-    const onReady = () => setCanPrompt(true);
+    const onReady = () => { setCanPrompt(true); setVisible(true); };
     const onInstalled = () => setVisible(false);
     window.addEventListener('gfss-install-ready', onReady);
     window.addEventListener('gfss-installed', onInstalled);
 
-    const timer = setTimeout(() => setVisible(true), 2500);
+    // Show banner promptly after 600ms
+    const timer = setTimeout(() => setVisible(true), 600);
     return () => {
       clearTimeout(timer);
       window.removeEventListener('gfss-install-ready', onReady);
       window.removeEventListener('gfss-installed', onInstalled);
     };
-  }, [isAndroid, isIOS]);
+  }, []);
 
   const dismiss = () => {
     setVisible(false);
-    localStorage.setItem(DISMISS_KEY, String(Date.now()));
+    sessionStorage.setItem('gfss_app_dismissed', 'true');
   };
 
   const install = async () => {

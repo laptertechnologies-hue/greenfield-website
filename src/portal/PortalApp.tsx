@@ -14,6 +14,7 @@ import { Results } from './screens/Results';
 import { Attendance } from './screens/Attendance';
 import { More } from './screens/More';
 import './portal.css';
+import { AppInstallBanner } from '../components/AppInstallBanner';
 
 // Which child a parent is currently looking at
 interface ChildCtx { children: Student[]; child: Student | null; setChildId: (id: string) => void; }
@@ -67,7 +68,10 @@ export default function PortalApp() {
   return (
     <AuthProvider>
       <ChildProvider>
-        <div className="pa-root"><Routed /></div>
+        <div className="pa-root">
+          <AppInstallBanner />
+          <Routed />
+        </div>
       </ChildProvider>
     </AuthProvider>
   );
