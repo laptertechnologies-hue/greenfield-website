@@ -114,6 +114,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
               <li><Link to="/about"><i className="fas fa-chevron-right"></i> About Us</Link></li>
               <li><Link to="/contact"><i className="fas fa-chevron-right"></i> Contact</Link></li>
               <li><Link to="/app"><i className="fas fa-chevron-right"></i> Student/Staff Portal</Link></li>
+              <li><Link to="/admin"><i className="fas fa-chevron-right"></i> Admin Portal</Link></li>
             </ul>
           </div>
 

@@ -8,6 +8,7 @@ import { Academics } from './pages/Academics';
 import { Admissions } from './pages/Admissions';
 import { Gallery } from './pages/Gallery';
 import { Contact } from './pages/Contact';
+import { Admin } from './pages/Admin';
 
 // The parents' portal app lives under /app and has its own look (no website header/footer).
 const PortalApp = lazy(() => import('./portal/PortalApp'));
@@ -25,6 +26,7 @@ function Website() {
         <Route path="/admissions" element={<Admissions />} />
         <Route path="/gallery" element={<Gallery />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/admin" element={<Admin />} />
         {/* Old portal links now go to the new app */}
         <Route path="/portal" element={<Navigate to="/app" replace />} />
         <Route path="/login" element={<Navigate to="/app/sign-in" replace />} />
