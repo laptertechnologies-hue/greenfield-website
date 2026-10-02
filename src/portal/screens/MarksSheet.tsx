@@ -15,10 +15,16 @@ export function MarksSheet() {
   const list = (all ?? []).filter((s) => s.className === cls && s.status === 'active');
   const key = (id: string) => `${cls}|${subject}|${id}`;
 
-  function save() {
-    // Demo: marks stay on this device. Connect api.saveMarks() to your server to store them.
-    setSaved(`Saved ${list.filter((s) => marks[key(s.id)]).length} marks for ${subject}, ${cls}.`);
-    setTimeout(() => setSaved(''), 3000);
+  async function save() {
+    const entries = list
+      .filter((s) => marks[key(s.id)] && Number(marks[key(s.id)]) <= 100)
+      .map((s) => ({ studentId: s.id, subject, eot: Number(marks[key(s.id)]) }));
+    if (!entries.length) { setSaved('Enter at least one mark (0 to 100) first.'); return; }
+    try {
+      const n = await api.saveMarks(entries);
+      setSaved(`Saved ${n} marks for ${subject}, ${cls}.`);
+    } catch (e) { setSaved((e as Error).message); }
+    setTimeout(() => setSaved(''), 3500);
   }
 
   return (

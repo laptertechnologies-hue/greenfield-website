@@ -31,8 +31,8 @@ function ParentFees() {
 function StaffFees() {
   const [rows, setRows] = useState<{ s: Student; balance: number }[] | null>(null);
   useEffect(() => {
-    api.students().then(async (list) => {
-      const r = await Promise.all(list.map(async (s) => ({ s, balance: (await api.fees(s.id)).reduce((a, f) => a + f.amount, 0) })));
+    Promise.all([api.students(), api.balances()]).then(([list, bal]) => {
+      const r = list.map((s) => ({ s, balance: bal[s.id] ?? 0 }));
       setRows(r.sort((a, b) => b.balance - a.balance));
     });
   }, []);

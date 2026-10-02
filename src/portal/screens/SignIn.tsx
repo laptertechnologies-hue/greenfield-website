@@ -44,20 +44,21 @@ export function SignIn() {
 
       <form className="pa-form" onSubmit={submit} noValidate>
         <label className="pa-field">
-          <span>{role === 'staff' ? 'Username' : 'Phone number or school pay code'}</span>
+          <span>{role === 'staff' ? 'Username' : 'Registration number or pay code'}</span>
           <div className="pa-input">
             <i className="fas fa-user" />
             <input value={login} onChange={(e) => setLogin(e.target.value)} autoComplete="username"
-              inputMode={role === 'parent' ? 'text' : 'text'}
-              placeholder={role === 'staff' ? 'e.g. headteacher' : 'e.g. 0772 000000 or PC2101'} />
+              autoCapitalize={role === 'parent' ? 'characters' : 'none'}
+              placeholder={role === 'staff' ? 'Your staff username' : 'e.g. GFSS23010993'} />
           </div>
         </label>
         <label className="pa-field">
-          <span>Password</span>
+          <span>{role === 'staff' ? 'Password' : 'PIN'}</span>
           <div className="pa-input">
             <i className="fas fa-lock" />
             <input type={show ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)}
-              autoComplete="current-password" placeholder="Enter your password" />
+              inputMode={role === 'parent' ? 'numeric' : 'text'}
+              autoComplete="current-password" placeholder={role === 'staff' ? 'Enter your password' : 'Enter your 4-digit PIN'} />
             <button type="button" className="pa-eye" onClick={() => setShow(!show)} aria-label={show ? 'Hide password' : 'Show password'}>
               <i className={`fas ${show ? 'fa-eye-slash' : 'fa-eye'}`} />
             </button>
@@ -65,15 +66,11 @@ export function SignIn() {
         </label>
         {error && <p className="pa-error" role="alert">{error}</p>}
         <button className="pa-btn" disabled={busy}>{busy ? 'Signing in…' : 'Sign in'}</button>
-        <p className="pa-fineprint pa-center">Forgot your password? <a href={`tel:${SCHOOL.phone.replace(/\s/g, '')}`}>Call the school office</a>.</p>
+        <p className="pa-fineprint pa-center">
+          {role === 'parent' ? 'Don’t have your PIN? ' : 'Forgot your password? '}
+          <a href={`tel:${SCHOOL.phone.replace(/\s/g, '')}`}>Call the school office</a>.
+        </p>
       </form>
-
-      <aside className="pa-demo">
-        <strong>Demo accounts</strong>
-        <span>Parent: 0772000000 / 1234</span>
-        <span>Student: PC2101 / 1234</span>
-        <span>Staff: headteacher / admin123</span>
-      </aside>
     </div>
   );
 }
