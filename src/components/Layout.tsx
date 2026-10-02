@@ -115,7 +115,6 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
               <li><Link to="/contact"><i className="fas fa-chevron-right"></i> Contact</Link></li>
               <li><Link to="/app"><i className="fas fa-chevron-right"></i> Student/Staff Portal</Link></li>
               <li><Link to="/admin"><i className="fas fa-chevron-right"></i> Admin Portal</Link></li>
-              <li><a href="/gfss-app.apk" download="Greenfield-Secondary-School.apk" style={{ color: 'var(--gold)', fontWeight: 600 }}><i className="fab fa-android"></i> Download Android App (.apk)</a></li>
             </ul>
           </div>
 

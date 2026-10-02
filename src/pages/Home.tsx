@@ -107,7 +107,7 @@ export const Home: React.FC = () => {
           <p style={{ marginBottom: '8px' }}><strong>PEARL BANK:</strong> A/C 1630017000193</p>
           <p style={{ marginBottom: '8px' }}><strong>Mobile Payment:</strong> Use student's pay code: *165*4# (MTN) or *185*6# (AIRTEL)</p>
           <p style={{ fontWeight: '500', color: 'var(--dark-green)' }}>
-            <strong>Note:</strong> A student of S.1 and S.2 is required to pay a fee of 80,000 UGX for vocational studies per term.
+            <strong>Note:</strong> A student of S.1 and S.2 is required to pay a fee of 50,000 UGX for vocational studies per term.
           </p>
         </div>
 
