@@ -28,11 +28,41 @@ export function ParentHome() {
   const [pinStatus, setPinStatus] = useState('');
   const [pinDismissed, setPinDismissed] = useState(() => localStorage.getItem('gfss_pin_dismissed') === 'true');
 
+  const [urgentNotice, setUrgentNotice] = useState<{ id?: number; title: string; content: string } | null>(null);
+  const [canNotify, setCanNotify] = useState(() => 'Notification' in window && Notification.permission === 'default');
+
   useEffect(() => {
-    api.announcements().then((res) => {
-      if (res && res.length > 0) setNotices(res.slice(0, 4));
+    api.announcements().then((res: any[]) => {
+      if (res && res.length > 0) {
+        setNotices(res.slice(0, 4));
+        const urgent = res.find((n) => n.priority === 'urgent' && !localStorage.getItem(`gfss_seen_urgent_${n.id}`));
+        if (urgent) setUrgentNotice(urgent);
+      }
     }).catch(() => {});
   }, []);
+
+  async function requestNotification() {
+    if (!('Notification' in window)) return;
+    try {
+      const perm = await Notification.requestPermission();
+      setCanNotify(false);
+      if (perm === 'granted' && 'serviceWorker' in navigator) {
+        const reg = await navigator.serviceWorker.ready;
+        reg.showNotification('Greenfield Secondary School', {
+          body: 'Notifications active! You will now receive school alerts and circulars.',
+          icon: '/icon-192.png',
+          badge: '/icon-192.png',
+        });
+      }
+    } catch {
+      setCanNotify(false);
+    }
+  }
+
+  function dismissUrgent(id?: number) {
+    if (id) localStorage.setItem(`gfss_seen_urgent_${id}`, 'true');
+    setUrgentNotice(null);
+  }
 
   async function handleUpdatePin(e: React.FormEvent) {
     e.preventDefault();
@@ -56,6 +86,19 @@ export function ParentHome() {
       <ChildPicker />
       {!child ? <Loading /> : (
         <>
+          {/* Lock-screen notification permission prompt */}
+          {canNotify && (
+            <div style={{ background: '#ecfdf5', border: '1px solid #a7f3d0', borderRadius: '14px', padding: '10px 14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <i className="fas fa-bell" style={{ color: '#059669', fontSize: '1.1rem' }}></i>
+                <span style={{ fontSize: '0.78rem', color: '#065f46' }}>Get urgent school circulars & fee notices on your lock screen</span>
+              </div>
+              <button onClick={requestNotification} style={{ background: '#059669', color: '#fff', border: 0, padding: '5px 12px', borderRadius: '8px', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap' }}>
+                Turn On
+              </button>
+            </div>
+          )}
+
           {/* Security Banner for default PIN */}
           {!pinDismissed && (
             <div style={{ background: '#fffbeb', border: '1px solid #fef3c7', borderRadius: '14px', padding: '12px 14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
@@ -136,6 +179,23 @@ export function ParentHome() {
                     <button type="submit" style={{ flex: 1, padding: '10px', borderRadius: '10px', border: 0, background: '#0f2e17', color: '#fff', cursor: 'pointer', fontWeight: 600 }}>Save PIN</button>
                   </div>
                 </form>
+              </div>
+            </div>
+          )}
+
+          {/* Urgent School Notice Popup */}
+          {urgentNotice && (
+            <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 120, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
+              <div style={{ background: '#fff', borderRadius: '24px', maxWidth: '420px', width: '100%', padding: '24px', borderTop: '6px solid #b3261e', boxShadow: '0 25px 60px rgba(0,0,0,0.35)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
+                  <i className="fas fa-bullhorn" style={{ color: '#b3261e', fontSize: '1.4rem' }}></i>
+                  <h3 style={{ margin: 0, fontSize: '1.15rem', color: '#1d2a20' }}>Urgent School Notice</h3>
+                </div>
+                <h4 style={{ margin: '0 0 8px', fontSize: '1.05rem', color: '#0f2e17' }}>{urgentNotice.title}</h4>
+                <p style={{ margin: '0 0 20px', fontSize: '0.88rem', color: '#475569', lineHeight: 1.55 }}>{urgentNotice.content}</p>
+                <button onClick={() => dismissUrgent(urgentNotice.id)} style={{ width: '100%', padding: '12px', borderRadius: '12px', background: '#0f2e17', color: '#fff', border: 0, fontWeight: 600, cursor: 'pointer' }}>
+                  Acknowledge & Continue
+                </button>
               </div>
             </div>
           )}

@@ -10,7 +10,37 @@ export function StaffHome() {
   const [students, setStudents] = useState<Student[]>([]);
   const [q, setQ] = useState('');
   const nav = useNavigate();
+  const [showBroadcast, setShowBroadcast] = useState(false);
+  const [bTitle, setBTitle] = useState('');
+  const [bContent, setBContent] = useState('');
+  const [bPriority, setBPriority] = useState<'normal' | 'urgent'>('normal');
+  const [bStatus, setBStatus] = useState('');
+
   useEffect(() => { api.overview().then(setO); api.students().then(setStudents); }, []);
+
+  async function handleSendBroadcast(e: React.FormEvent) {
+    e.preventDefault();
+    if (!bTitle || !bContent) return;
+    try {
+      setBStatus('Publishing circular...');
+      const token = localStorage.getItem('gfss-portal-token');
+      const res = await fetch('https://api.laptertech.store/api/announcements', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ title: bTitle, content: bContent, priority: bPriority }),
+      });
+      if (!res.ok) throw new Error('Failed to publish');
+      setBStatus('Circular published successfully!');
+      setTimeout(() => {
+        setShowBroadcast(false);
+        setBTitle('');
+        setBContent('');
+        setBStatus('');
+      }, 1500);
+    } catch {
+      setBStatus('Error publishing. Please try again.');
+    }
+  }
 
   const hits = useMemo(() => {
     const t = q.trim().toLowerCase();
@@ -94,7 +124,69 @@ export function StaffHome() {
                 </div>
               </Link>
             </div>
+
+            <div style={{ marginTop: '12px' }}>
+              <button
+                onClick={() => setShowBroadcast(true)}
+                style={{ width: '100%', padding: '12px', borderRadius: '12px', background: 'var(--g-900)', color: '#fff', border: 0, fontWeight: 600, fontSize: '0.88rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+              >
+                <i className="fas fa-bullhorn" style={{ color: 'var(--gold)' }}></i>
+                Send Circular / Announcement to Parents
+              </button>
+            </div>
           </section>
+
+          {/* Broadcast Circular Modal */}
+          {showBroadcast && (
+            <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
+              <div style={{ background: '#fff', borderRadius: '20px', maxWidth: '440px', width: '100%', padding: '24px', boxShadow: '0 20px 50px rgba(0,0,0,0.3)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                  <h3 style={{ margin: 0, fontSize: '1.2rem', color: '#0f2e17' }}>Broadcast to Parents</h3>
+                  <button onClick={() => setShowBroadcast(false)} style={{ background: 'none', border: 0, fontSize: '1.2rem', cursor: 'pointer', color: '#64748b' }}>&times;</button>
+                </div>
+                <p style={{ margin: '0 0 16px', fontSize: '0.82rem', color: '#64748b' }}>This announcement will appear instantly on the portal and mobile phones of all 682 parents.</p>
+                <form onSubmit={handleSendBroadcast}>
+                  <div style={{ marginBottom: '12px' }}>
+                    <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, marginBottom: '4px' }}>Title</label>
+                    <input
+                      value={bTitle}
+                      onChange={(e) => setBTitle(e.target.value)}
+                      placeholder="e.g. End of Term Visitation Day"
+                      required
+                      style={{ width: '100%', padding: '10px 12px', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '0.9rem', boxSizing: 'border-box' }}
+                    />
+                  </div>
+                  <div style={{ marginBottom: '12px' }}>
+                    <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, marginBottom: '4px' }}>Priority</label>
+                    <select
+                      value={bPriority}
+                      onChange={(e) => setBPriority(e.target.value as any)}
+                      style={{ width: '100%', padding: '10px 12px', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '0.9rem', boxSizing: 'border-box' }}
+                    >
+                      <option value="normal">Normal Announcement (Circular feed)</option>
+                      <option value="urgent">Urgent Alert (Pops up immediately on phone)</option>
+                    </select>
+                  </div>
+                  <div style={{ marginBottom: '16px' }}>
+                    <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, marginBottom: '4px' }}>Message Details</label>
+                    <textarea
+                      value={bContent}
+                      onChange={(e) => setBContent(e.target.value)}
+                      placeholder="Write message details for parents and students..."
+                      rows={4}
+                      required
+                      style={{ width: '100%', padding: '10px 12px', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '0.9rem', boxSizing: 'border-box' }}
+                    />
+                  </div>
+                  {bStatus && <p style={{ fontSize: '0.82rem', color: bStatus.includes('success') ? '#166534' : '#b91c1c', margin: '0 0 12px' }}>{bStatus}</p>}
+                  <div style={{ display: 'flex', gap: '10px' }}>
+                    <button type="button" onClick={() => setShowBroadcast(false)} style={{ flex: 1, padding: '10px', borderRadius: '10px', border: '1px solid #cbd5e1', background: '#f8fafc', cursor: 'pointer', fontWeight: 600 }}>Cancel</button>
+                    <button type="submit" style={{ flex: 1, padding: '10px', borderRadius: '10px', border: 0, background: 'var(--g-900)', color: '#fff', cursor: 'pointer', fontWeight: 600 }}>Publish Circular</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
         </>
       )}
     </Shell>

@@ -30,3 +30,36 @@ self.addEventListener('fetch', (e) => {
     }))
   );
 });
+
+// Native Push Notifications
+self.addEventListener('push', (e) => {
+  let data = { title: 'Greenfield Secondary School', body: 'New circular from school administration.', url: '/app/home' };
+  try {
+    if (e.data) data = { ...data, ...e.data.json() };
+  } catch {
+    if (e.data) data.body = e.data.text();
+  }
+  const options = {
+    body: data.body,
+    icon: '/icon-192.png',
+    badge: '/icon-192.png',
+    vibrate: [200, 100, 200],
+    data: { url: data.url || '/app/home' },
+  };
+  e.waitUntil(self.registration.showNotification(data.title, options));
+});
+
+self.addEventListener('notificationclick', (e) => {
+  e.notification.close();
+  const targetUrl = e.notification.data?.url || '/app/home';
+  e.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+      for (const client of clientList) {
+        if (client.url.includes('/app') && 'focus' in client) {
+          return client.focus();
+        }
+      }
+      if (clients.openWindow) return clients.openWindow(targetUrl);
+    })
+  );
+});
