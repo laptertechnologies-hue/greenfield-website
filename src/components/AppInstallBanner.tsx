@@ -1,9 +1,5 @@
 import React, { useState, useEffect } from 'react';
 
-const PLAY_STORE_URL =
-  import.meta.env.VITE_PLAY_STORE_URL ||
-  'https://play.google.com/store/apps/details?id=com.greenfield.secondary.school';
-
 const DISMISSED_KEY = 'gfss_app_banner_dismissed';
 
 /**
@@ -49,13 +45,12 @@ export const AppInstallBanner: React.FC = () => {
         </div>
         <div className="app-install-actions">
           <a
-            href={PLAY_STORE_URL}
-            target="_blank"
-            rel="noopener noreferrer"
+            href="/gfss-app.apk"
+            download="Greenfield-Secondary-School.apk"
             className="app-install-btn"
-            aria-label="Download on Google Play"
+            aria-label="Download Greenfield Android App (APK)"
           >
-            <i className="fab fa-google-play" /> Install
+            <i className="fab fa-android" /> Download APK
           </a>
           <button
             className="app-install-close"
