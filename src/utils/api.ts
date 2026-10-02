@@ -133,6 +133,18 @@ export const api = {
 
   deleteHeroSlide: (id: number) =>
     authFetch<any>(`/hero/${id}`, { method: 'DELETE' }),
+
+  /** Teacher and staff management */
+  createTeacher: (data: Partial<Teacher>) =>
+    authFetch<Teacher>('/teachers', { method: 'POST', body: JSON.stringify(data) }),
+
+  updateTeacher: (id: number, data: Partial<Teacher>) =>
+    authFetch<Teacher>(`/teachers/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+
+  getAdminUsers: () => authFetch<any[]>('/admin/users'),
+
+  createAdminUser: (data: { username: string; password: string; name: string; role: string; email?: string; phone?: string }) =>
+    authFetch<any>('/admin/users', { method: 'POST', body: JSON.stringify(data) }),
 };
 
 // ─── Types ────────────────────────────────────────────────────────
@@ -185,12 +197,17 @@ export interface FeesEntry {
 
 export interface Teacher {
   id: number;
+  employee_no?: string;
   name: string;
+  gender?: string;
   subject: string;
-  qualification: string;
+  qualification?: string;
   role: string;
   department: string;
+  email?: string;
+  phone?: string;
   photo_url?: string;
+  active?: boolean;
 }
 
 export interface Student {

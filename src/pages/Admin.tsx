@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import api from '../utils/api';
-import type { AdminStats, Student, Announcement } from '../utils/api';
+import type { AdminStats, Student, Announcement, Teacher } from '../utils/api';
 
 export const Admin: React.FC = () => {
   const [token, setToken] = useState<string | null>(localStorage.getItem('gfss_token'));
   const [user, setUser] = useState<any>(null);
-  const [activeTab, setActiveTab] = useState<'overview' | 'announcements' | 'admissions' | 'students' | 'messages' | 'slides'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'announcements' | 'admissions' | 'students' | 'teachers' | 'messages' | 'slides'>('overview');
 
   // Login form state
   const [username, setUsername] = useState('admin');
@@ -18,6 +18,7 @@ export const Admin: React.FC = () => {
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [admissions, setAdmissions] = useState<any[]>([]);
   const [students, setStudents] = useState<Student[]>([]);
+  const [teachers, setTeachers] = useState<Teacher[]>([]);
   const [messages, setMessages] = useState<any[]>([]);
   const [slides, setSlides] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
@@ -25,6 +26,20 @@ export const Admin: React.FC = () => {
   // Form states
   const [newAnn, setNewAnn] = useState({ title: '', content: '', priority: 'normal' as 'normal' | 'urgent' | 'info' });
   const [newStudent, setNewStudent] = useState({ admission_no: '', name: '', class_name: 'S.1', stream: 'North', gender: 'M', parent_name: '', parent_phone: '', status: 'active' });
+  const [newTeacher, setNewTeacher] = useState({
+    employee_no: '',
+    name: '',
+    gender: 'M',
+    subject: '',
+    qualification: 'Bachelor of Education',
+    role: 'teacher',
+    department: 'Sciences',
+    phone: '',
+    email: '',
+    create_login: false,
+    login_username: '',
+    login_password: 'Password@2026'
+  });
   const [newSlide, setNewSlide] = useState({ image_url: '', title: '', caption: '', slide_order: 1 });
   const [actionMessage, setActionMessage] = useState('');
 
@@ -64,6 +79,11 @@ export const Admin: React.FC = () => {
     } else if (activeTab === 'students') {
       api.getStudents()
         .then(res => setStudents(res.students || []))
+        .catch(console.error)
+        .finally(() => setLoading(false));
+    } else if (activeTab === 'teachers') {
+      api.getTeachers()
+        .then(res => setTeachers(res || []))
         .catch(console.error)
         .finally(() => setLoading(false));
     } else if (activeTab === 'messages') {
@@ -136,6 +156,86 @@ export const Admin: React.FC = () => {
       setStudents(updated.students);
     } catch (err: any) {
       setActionMessage('Failed to create student: ' + err.message);
+    }
+  };
+
+  const handleAddTeacher = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newTeacher.name || !newTeacher.subject) {
+      setActionMessage('Please enter teacher name and subject.');
+      return;
+    }
+    try {
+      const empNo = newTeacher.employee_no.trim() || `TCH-${Math.floor(1000 + Math.random() * 9000)}`;
+      await api.createTeacher({
+        name: newTeacher.name,
+        employee_no: empNo,
+        gender: newTeacher.gender,
+        subject: newTeacher.subject,
+        qualification: newTeacher.qualification,
+        role: newTeacher.role,
+        department: newTeacher.department,
+        phone: newTeacher.phone,
+        email: newTeacher.email,
+      });
+
+      // Optionally provision portal login account
+      if (newTeacher.create_login) {
+        const uName = (newTeacher.login_username.trim() || empNo).toLowerCase();
+        try {
+          await api.createAdminUser({
+            username: uName,
+            password: newTeacher.login_password || 'Password@2026',
+            name: newTeacher.name,
+            role: newTeacher.role === 'headteacher' || newTeacher.role === 'admin' ? 'admin' : 'teacher',
+            email: newTeacher.email,
+            phone: newTeacher.phone,
+          });
+        } catch {
+          // Continue even if login user exists
+        }
+      }
+
+      setActionMessage(`Teacher ${newTeacher.name} successfully registered with role: ${newTeacher.role}!`);
+      setNewTeacher({
+        employee_no: '',
+        name: '',
+        gender: 'M',
+        subject: '',
+        qualification: 'Bachelor of Education',
+        role: 'teacher',
+        department: 'Sciences',
+        phone: '',
+        email: '',
+        create_login: false,
+        login_username: '',
+        login_password: 'Password@2026'
+      });
+      const updated = await api.getTeachers();
+      setTeachers(updated || []);
+    } catch (err: any) {
+      setActionMessage('Failed to register teacher: ' + err.message);
+    }
+  };
+
+  const handleUpdateTeacherRole = async (id: number, role: string) => {
+    try {
+      await api.updateTeacher(id, { role });
+      setTeachers(prev => prev.map(t => t.id === id ? { ...t, role } : t));
+      setActionMessage(`Teacher role updated to ${role}.`);
+    } catch (err: any) {
+      setActionMessage('Failed to update role: ' + err.message);
+    }
+  };
+
+  const handleToggleTeacherStatus = async (t: Teacher) => {
+    try {
+      const nextActive = t.active === false ? true : false;
+      await api.updateTeacher(t.id, { active: nextActive });
+      setTeachers(prev => prev.map(x => x.id === t.id ? { ...x, active: nextActive } : x));
+      setActionMessage(`Teacher status changed to ${nextActive ? 'Active' : 'Inactive'}.`);
+    } catch (err: any) {
+      setActionMessage('Failed to update status: ' + err.message);
     }
   };
 
@@ -282,6 +382,7 @@ export const Admin: React.FC = () => {
           { id: 'announcements', label: 'Announcements', icon: 'fa-bullhorn' },
           { id: 'admissions', label: 'Admissions', icon: 'fa-file-signature' },
           { id: 'students', label: 'Students', icon: 'fa-user-graduate' },
+          { id: 'teachers', label: 'Teachers & Roles', icon: 'fa-chalkboard-user' },
           { id: 'messages', label: 'Inquiries', icon: 'fa-envelope' },
           { id: 'slides', label: 'Hero Slides', icon: 'fa-images' }
         ].map(tab => (
@@ -595,6 +696,280 @@ export const Admin: React.FC = () => {
                       </td>
                     </tr>
                   ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ----------------- TAB: TEACHERS & ROLES ----------------- */}
+      {!loading && activeTab === 'teachers' && (
+        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(320px, 380px) 1fr', gap: '25px', alignItems: 'start' }}>
+          {/* Register Teacher Form */}
+          <div style={{ background: 'white', padding: '24px', borderRadius: '12px', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+            <h3 style={{ color: 'var(--primary-green)', marginTop: 0, marginBottom: '6px' }}>
+              <i className="fas fa-user-plus"></i> Register Teacher & Assign Role
+            </h3>
+            <p style={{ fontSize: '0.82rem', color: '#64748b', marginTop: 0, marginBottom: '18px' }}>
+              Add teaching staff to the school database and assign administrative responsibilities.
+            </p>
+
+            <form onSubmit={handleAddTeacher}>
+              <div style={{ marginBottom: '12px' }}>
+                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '4px' }}>Full Name *</label>
+                <input
+                  type="text"
+                  placeholder="e.g. Mr. Okello Peter"
+                  value={newTeacher.name}
+                  onChange={(e) => setNewTeacher({ ...newTeacher, name: e.target.value })}
+                  required
+                  style={{ width: '100%', padding: '9px', border: '1px solid #cbd5e1', borderRadius: '6px' }}
+                />
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '12px' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '4px' }}>Staff / Employee ID</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. TCH-104"
+                    value={newTeacher.employee_no}
+                    onChange={(e) => setNewTeacher({ ...newTeacher, employee_no: e.target.value })}
+                    style={{ width: '100%', padding: '9px', border: '1px solid #cbd5e1', borderRadius: '6px' }}
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '4px' }}>Gender</label>
+                  <select
+                    value={newTeacher.gender}
+                    onChange={(e) => setNewTeacher({ ...newTeacher, gender: e.target.value })}
+                    style={{ width: '100%', padding: '9px', border: '1px solid #cbd5e1', borderRadius: '6px' }}
+                  >
+                    <option value="M">Male</option>
+                    <option value="F">Female</option>
+                  </select>
+                </div>
+              </div>
+
+              <div style={{ marginBottom: '12px' }}>
+                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '4px' }}>Teaching Subject(s) *</label>
+                <input
+                  type="text"
+                  placeholder="e.g. Mathematics, Physics"
+                  value={newTeacher.subject}
+                  onChange={(e) => setNewTeacher({ ...newTeacher, subject: e.target.value })}
+                  required
+                  style={{ width: '100%', padding: '9px', border: '1px solid #cbd5e1', borderRadius: '6px' }}
+                />
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '12px' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '4px' }}>Department</label>
+                  <select
+                    value={newTeacher.department}
+                    onChange={(e) => setNewTeacher({ ...newTeacher, department: e.target.value })}
+                    style={{ width: '100%', padding: '9px', border: '1px solid #cbd5e1', borderRadius: '6px' }}
+                  >
+                    <option value="Sciences">Sciences</option>
+                    <option value="Humanities">Humanities</option>
+                    <option value="Languages">Languages</option>
+                    <option value="Vocational">Vocational</option>
+                    <option value="Administration">Administration</option>
+                  </select>
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '4px', color: 'var(--primary-green)' }}>
+                    Assigned Role *
+                  </label>
+                  <select
+                    value={newTeacher.role}
+                    onChange={(e) => setNewTeacher({ ...newTeacher, role: e.target.value })}
+                    style={{ width: '100%', padding: '9px', border: '1.5px solid var(--primary-green)', borderRadius: '6px', fontWeight: 600 }}
+                  >
+                    <option value="teacher">Subject Teacher</option>
+                    <option value="class_teacher">Class Teacher</option>
+                    <option value="head_of_dept">Head of Dept (HOD)</option>
+                    <option value="dos">Director of Studies (DOS)</option>
+                    <option value="deputy_head">Deputy Headteacher</option>
+                    <option value="headteacher">Headteacher</option>
+                    <option value="admin">System Admin</option>
+                  </select>
+                </div>
+              </div>
+
+              <div style={{ marginBottom: '12px' }}>
+                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '4px' }}>Qualification</label>
+                <input
+                  type="text"
+                  placeholder="e.g. B.Ed (Hons) Makerere"
+                  value={newTeacher.qualification}
+                  onChange={(e) => setNewTeacher({ ...newTeacher, qualification: e.target.value })}
+                  style={{ width: '100%', padding: '9px', border: '1px solid #cbd5e1', borderRadius: '6px' }}
+                />
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '12px' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '4px' }}>Phone Number</label>
+                  <input
+                    type="tel"
+                    placeholder="+256 772..."
+                    value={newTeacher.phone}
+                    onChange={(e) => setNewTeacher({ ...newTeacher, phone: e.target.value })}
+                    style={{ width: '100%', padding: '9px', border: '1px solid #cbd5e1', borderRadius: '6px' }}
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '4px' }}>Email</label>
+                  <input
+                    type="email"
+                    placeholder="teacher@greenfield.sc.ug"
+                    value={newTeacher.email}
+                    onChange={(e) => setNewTeacher({ ...newTeacher, email: e.target.value })}
+                    style={{ width: '100%', padding: '9px', border: '1px solid #cbd5e1', borderRadius: '6px' }}
+                  />
+                </div>
+              </div>
+
+              {/* Login Account Provisioning */}
+              <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '12px', marginBottom: '16px' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600 }}>
+                  <input
+                    type="checkbox"
+                    checked={newTeacher.create_login}
+                    onChange={(e) => setNewTeacher({ ...newTeacher, create_login: e.target.checked })}
+                  />
+                  <span>Create Staff Portal Login Credentials</span>
+                </label>
+                {newTeacher.create_login && (
+                  <div style={{ marginTop: '10px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.78rem', color: '#64748b' }}>Username</label>
+                      <input
+                        type="text"
+                        placeholder="e.g. okello.p"
+                        value={newTeacher.login_username}
+                        onChange={(e) => setNewTeacher({ ...newTeacher, login_username: e.target.value })}
+                        style={{ width: '100%', padding: '7px', border: '1px solid #cbd5e1', borderRadius: '4px', fontSize: '0.85rem' }}
+                      />
+                    </div>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.78rem', color: '#64748b' }}>Initial Password</label>
+                      <input
+                        type="text"
+                        value={newTeacher.login_password}
+                        onChange={(e) => setNewTeacher({ ...newTeacher, login_password: e.target.value })}
+                        style={{ width: '100%', padding: '7px', border: '1px solid #cbd5e1', borderRadius: '4px', fontSize: '0.85rem' }}
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <button
+                type="submit"
+                style={{ background: 'var(--primary-green)', color: 'white', border: 'none', padding: '12px 20px', borderRadius: '8px', fontWeight: 600, cursor: 'pointer', width: '100%', fontSize: '0.92rem' }}
+              >
+                <i className="fas fa-check-circle" style={{ marginRight: '6px' }}></i> Register Staff Member
+              </button>
+            </form>
+          </div>
+
+          {/* Teachers List & Role Manager */}
+          <div style={{ background: 'white', padding: '24px', borderRadius: '12px', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '10px' }}>
+              <div>
+                <h3 style={{ color: 'var(--primary-green)', margin: 0 }}>
+                  <i className="fas fa-chalkboard-user"></i> Teaching Staff Directory ({teachers.length})
+                </h3>
+                <span style={{ fontSize: '0.8rem', color: '#64748b' }}>View all staff and adjust roles on the fly</span>
+              </div>
+            </div>
+
+            <div style={{ overflowX: 'auto', maxHeight: '550px' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.88rem' }}>
+                <thead>
+                  <tr style={{ background: '#f1f5f9', textAlign: 'left' }}>
+                    <th style={{ padding: '10px 12px' }}>Staff Member</th>
+                    <th style={{ padding: '10px 12px' }}>Subject & Dept</th>
+                    <th style={{ padding: '10px 12px' }}>Current Role</th>
+                    <th style={{ padding: '10px 12px' }}>Reassign Role</th>
+                    <th style={{ padding: '10px 12px' }}>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {teachers.length === 0 ? (
+                    <tr>
+                      <td colSpan={5} style={{ padding: '24px', textAlign: 'center', color: '#64748b' }}>
+                        No teachers found. Use the form on the left to register teaching staff.
+                      </td>
+                    </tr>
+                  ) : (
+                    teachers.map((tch) => {
+                      const roleMeta: Record<string, { label: string; bg: string; color: string }> = {
+                        headteacher: { label: 'Headteacher', bg: '#f3e8ff', color: '#6b21a8' },
+                        deputy_head: { label: 'Deputy Head', bg: '#e0e7ff', color: '#3730a3' },
+                        dos: { label: 'DOS', bg: '#fef3c7', color: '#92400e' },
+                        head_of_dept: { label: 'HOD', bg: '#dbeafe', color: '#1e40af' },
+                        class_teacher: { label: 'Class Teacher', bg: '#d1fae5', color: '#065f46' },
+                        admin: { label: 'Administrator', bg: '#fee2e2', color: '#991b1b' },
+                        teacher: { label: 'Subject Teacher', bg: '#f1f5f9', color: '#334155' },
+                      };
+                      const current = roleMeta[tch.role] || { label: tch.role || 'Teacher', bg: '#f1f5f9', color: '#334155' };
+                      return (
+                        <tr key={tch.id} style={{ borderBottom: '1px solid #e2e8f0' }}>
+                          <td style={{ padding: '10px 12px' }}>
+                            <strong style={{ display: 'block', color: 'var(--g-900)' }}>{tch.name}</strong>
+                            <span style={{ fontSize: '0.75rem', color: '#64748b' }}>{tch.employee_no || `ID #${tch.id}`}</span>
+                            {tch.phone && <span style={{ fontSize: '0.75rem', color: '#64748b', display: 'block' }}>📞 {tch.phone}</span>}
+                          </td>
+                          <td style={{ padding: '10px 12px' }}>
+                            <span style={{ fontWeight: 500 }}>{tch.subject}</span>
+                            <span style={{ fontSize: '0.75rem', color: '#64748b', display: 'block' }}>{tch.department || 'General'}</span>
+                          </td>
+                          <td style={{ padding: '10px 12px' }}>
+                            <span style={{ background: current.bg, color: current.color, padding: '4px 10px', borderRadius: '12px', fontSize: '0.75rem', fontWeight: 700, whiteSpace: 'nowrap' }}>
+                              {current.label}
+                            </span>
+                          </td>
+                          <td style={{ padding: '10px 12px' }}>
+                            <select
+                              value={tch.role}
+                              onChange={(e) => handleUpdateTeacherRole(tch.id, e.target.value)}
+                              style={{ padding: '5px 8px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.8rem', background: '#fff' }}
+                            >
+                              <option value="teacher">Subject Teacher</option>
+                              <option value="class_teacher">Class Teacher</option>
+                              <option value="head_of_dept">Head of Dept (HOD)</option>
+                              <option value="dos">DOS</option>
+                              <option value="deputy_head">Deputy Head</option>
+                              <option value="headteacher">Headteacher</option>
+                              <option value="admin">System Admin</option>
+                            </select>
+                          </td>
+                          <td style={{ padding: '10px 12px' }}>
+                            <button
+                              onClick={() => handleToggleTeacherStatus(tch)}
+                              style={{
+                                border: 'none',
+                                background: tch.active !== false ? '#dcfce7' : '#fee2e2',
+                                color: tch.active !== false ? '#15803d' : '#b91c1c',
+                                padding: '4px 8px',
+                                borderRadius: '6px',
+                                fontSize: '0.75rem',
+                                fontWeight: 600,
+                                cursor: 'pointer'
+                              }}
+                            >
+                              {tch.active !== false ? 'Active' : 'Inactive'}
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )}
                 </tbody>
               </table>
             </div>
